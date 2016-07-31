@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+
+import argparse
+import jdsnap
+
+def main():
+    tarsnap = jdsnap.Tarsnap("mail")
+
+    # Create new archive
+    tarsnap.create_archive("/Users/jds/Mail")
+
+    # Prune old archives
+    intervals = [jdsnap.YEAR, jdsnap.MONTH, jdsnap.WEEK, jdsnap.DAY]
+    all_archives = tarsnap.list_archives()
+    keep_archives = jdsnap.filter_archives(all_archives, intervals,
+                                           keep_all_within=jdsnap.WEEK)
+    delete_archives = set(all_archives) - set(keep_archives)
+    for archive in delete_archives:
+        tarsnap.rm_archive(archive)
+
+if __name__ == "__main__":
+    main()

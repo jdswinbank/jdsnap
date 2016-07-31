@@ -4,7 +4,7 @@ import argparse
 import jdsnap
 
 def main():
-    tarsnap = jdsnap.Tarsnap("mail")
+    tarsnap = jdsnap.Tarsnap("mail", exe="/opt/local/bin/tarsnap")
 
     # Create new archive
     tarsnap.create_archive("/Users/jds/Mail")

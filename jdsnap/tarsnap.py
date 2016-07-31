@@ -1,13 +1,16 @@
+import collections
 import datetime
 import os
 import shutil
 import subprocess
 import time
 
-__all__ = ["Tarsnap"]
+__all__ = ["Archive", "Tarsnap"]
 
 DEFAULT_EXECUTABLE="tarsnap"
 DEBUG = False
+
+Archive = collections.namedtuple("Archive", ["name", "date"])
 
 class Tarsnap(object):
     def __init__(self, prefix, exe=None, keyfile=None, cachedir=None):
@@ -30,21 +33,6 @@ class Tarsnap(object):
             print(cmd)
         return subprocess.check_output(cmd).decode('utf-8')
 
-    def list_archives(self):
-        """
-        Returns a list of (archive name, datetime) pairs.
-
-        datetimes are naive & in the system default timezone (can be
-        over-ridden by setting the TZ environment variable.
-        """
-        archives = []
-        for line in self._exec_cmd(["-v", "--list-archives"]).split('\n'):
-            if line.startswith(self.prefix):
-                name, date = line.split('\t')
-                date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-                archives.append((name, date))
-        return archives
-
     def create_archive(self, root, suffix=None):
         """
         Create an archive of the tree anchored at ``root``.
@@ -58,3 +46,26 @@ class Tarsnap(object):
         archive_name = "-".join([self.prefix, suffix])
         self._exec_cmd(["-c", "-f", archive_name, root])
         return archive_name
+
+    def list_archives(self):
+        """
+        Returns a list of Archives.
+
+        datetimes are naive & in the system default timezone (can be
+        over-ridden by setting the TZ environment variable.
+        """
+        archives = []
+        for line in self._exec_cmd(["-v", "--list-archives"]).split('\n'):
+            if line.startswith(self.prefix):
+                name, date = line.split('\t')
+                date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+                archives.append(Archive(name, date))
+        return archives
+
+    def rm_archive(self, archive_name):
+        """
+        Delete ``archive_name``.
+        """
+        if not archive_name.startswith(prefix):
+            raise Exception("Prefix mismatch: expected %s" % (self.prefix,))
+        self._exec_cmd(["-d", "-f", archive_name])

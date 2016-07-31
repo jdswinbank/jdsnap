@@ -3,6 +3,9 @@ from operator import attrgetter
 
 __all__ = ["filter_archives"]
 
+def uniqify(arg):
+    return list(set(arg))
+
 def filter_archives(archives, intervals, keep_all_within=None, current_date=None):
     """
     Return a list of archive names which should be kept.
@@ -22,8 +25,10 @@ def filter_archives(archives, intervals, keep_all_within=None, current_date=None
 
     for interval in intervals:
         for archive in archives[processed_archive+1:-1]:
-            # If the current date is inside the interval, we move to the next.
-            if (current_date - interval) < keep[-1].date:
+            # If the current date is inside the interval and this is not the
+            # last interval, we move to the next interval
+            if ((current_date - interval) < keep[-1].date
+                and interval is not intervals[-1]):
                 break
 
             # If the _next_ archive is going to be more than interval after
@@ -32,9 +37,8 @@ def filter_archives(archives, intervals, keep_all_within=None, current_date=None
                 keep.append(archive)
 
             # Keep everything within the last keep_all.
-            elif (keep_all_within
-                  and (archive.date + keep_all_within) >= current_date):
-                keep.append(archive)
+            elif keep_all_within and (archive.date + keep_all_within) >= current_date:
+                    keep.append(archive)
 
             # Discard this archive
             else:
@@ -43,4 +47,4 @@ def filter_archives(archives, intervals, keep_all_within=None, current_date=None
             processed_archive += 1
 
     keep.append(archives[-1])
-    return keep
+    return uniqify(keep)

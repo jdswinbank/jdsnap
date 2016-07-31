@@ -71,4 +71,4 @@ class ManualTestCase(unittest.TestCase):
         keep = filter_archives(self.archives, self.intervals,
                                keep_all_within=WEEK,
                                current_date=self.current_date)
-        self.assertEqual(len(keep), 17)
+        self.assertEqual(len(keep), 16)

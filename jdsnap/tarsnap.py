@@ -1,16 +1,14 @@
-import collections
 import datetime
 import os
 import shutil
 import subprocess
 import time
+from .archive import Archive
 
-__all__ = ["Archive", "Tarsnap"]
+__all__ = ["Tarsnap"]
 
 DEFAULT_EXECUTABLE="tarsnap"
 DEBUG = False
-
-Archive = collections.namedtuple("Archive", ["name", "date"])
 
 class Tarsnap(object):
     def __init__(self, prefix, exe=None, keyfile=None, cachedir=None):

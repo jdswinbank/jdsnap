@@ -60,10 +60,10 @@ class Tarsnap(object):
                 archives.append(Archive(name, date))
         return archives
 
-    def rm_archive(self, archive_name):
+    def rm_archive(self, archive):
         """
-        Delete ``archive_name``.
+        Delete ``archive.name``.
         """
-        if not archive_name.startswith(prefix):
+        if not archive.name.startswith(self.prefix):
             raise Exception("Prefix mismatch: expected %s" % (self.prefix,))
-        self._exec_cmd(["-d", "-f", archive_name])
+        self._exec_cmd(["-d", "-f", archive.name])

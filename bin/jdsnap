@@ -12,8 +12,7 @@ def main():
     # Prune old archives
     intervals = [jdsnap.YEAR, jdsnap.MONTH, jdsnap.WEEK, jdsnap.DAY]
     all_archives = tarsnap.list_archives()
-    keep_archives = jdsnap.filter_archives(all_archives, intervals,
-                                           keep_all_within=jdsnap.WEEK)
+    keep_archives = jdsnap.filter_archives(all_archives, intervals)
     delete_archives = set(all_archives) - set(keep_archives)
     for archive in delete_archives:
         tarsnap.rm_archive(archive)

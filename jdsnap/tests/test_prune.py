@@ -63,12 +63,39 @@ class ManualTestCase(unittest.TestCase):
                                current_date=self.current_date)
         self.assertEqual(len(keep), 12)
 
-    def test_list_recent(self):
-        """
-        Store the last week's worth of data.
-        """
-        intervals = [YEAR, MONTH, WEEK, DAY]
-        keep = filter_archives(self.archives, self.intervals,
-                               keep_all_within=WEEK,
+class AutoTestCase(unittest.TestCase):
+    INTERVALS = [YEAR, MONTH, WEEK, DAY]
+    STEP = 1    # Number of days between backups
+    YEARS = 10   # Number of years for which the backup system runs
+    START_DATE = datetime.datetime(2016, 8, 1, 1, 1, 1)
+
+    # Over ten years of archiving, we expect...
+    #
+    # - 10 annual archives
+    # - 12 monthly archives
+    # - 4 daily archives
+    #
+    # For a total of 26 archives.
+    RESULT = 26
+
+    def setUp(self):
+        self.archives = []
+        self.current_date = self.START_DATE
+
+    def test_single_prune(self):
+        for i in range(0, 365*self.YEARS, self.STEP):
+            self.archives.append(Archive("prefix-" + str(i), self.current_date))
+            self.current_date += self.STEP * DAY
+        keep = filter_archives(self.archives, self.INTERVALS,
                                current_date=self.current_date)
-        self.assertEqual(len(keep), 16)
+        result = [x for x in self.archives if x in keep]
+        self.assertEqual(len(result), self.RESULT)
+
+    def test_continuous_prune(self):
+        for i in range(0, 365*self.YEARS, self.STEP):
+            self.archives.append(Archive("prefix-" + str(i), self.current_date))
+            self.current_date += self.STEP * DAY
+            keep = filter_archives(self.archives, self.INTERVALS,
+                                   current_date=self.current_date)
+            result = [x for x in self.archives if x in keep]
+        self.assertEqual(len(result), self.RESULT)

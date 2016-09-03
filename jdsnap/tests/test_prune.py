@@ -57,26 +57,25 @@ class ManualTestCase(unittest.TestCase):
 
     def test_list_defaults(self):
         """
-        Should reduce to 12 archives with default settings.
+        Should reduce to 16 archives with default settings.
         """
         keep = filter_archives(self.archives, self.intervals,
                                current_date=self.current_date)
-        self.assertEqual(len(keep), 12)
+        self.assertEqual(len(keep), 16)
 
 class AutoTestCase(unittest.TestCase):
     INTERVALS = [YEAR, MONTH, WEEK, DAY]
     STEP = 1    # Number of days between backups
-    YEARS = 10   # Number of years for which the backup system runs
+    YEARS = 10  # Number of years for which the backup system runs
     START_DATE = datetime.datetime(2016, 8, 1, 1, 1, 1)
 
-    # Over ten years of archiving, we expect...
+    # Over ten years of archiving, we expect a total of 32 archives.
     #
-    # - 10 annual archives
-    # - 12 monthly archives
-    # - 4 daily archives
-    #
-    # For a total of 26 archives.
-    RESULT = 26
+    # - 9 annual
+    # - 12 monthly
+    # - 4 weekly
+    # - 6 daily
+    RESULT = 31
 
     def setUp(self):
         self.archives = []

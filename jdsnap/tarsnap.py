@@ -45,7 +45,7 @@ class Tarsnap(object):
         if not suffix:
             suffix = str(time.time())
         archive_name = "-".join([self.prefix, suffix])
-        cmd = ["-c", "-f", archive_name, root]
+        cmd = ["-c", "-H", "-f", archive_name, root]
         if exclude:
             cmd.insert(-1, "--exclude")
             cmd.insert(-1, exclude)

@@ -31,18 +31,25 @@ class Tarsnap(object):
             print(cmd)
         return subprocess.check_output(cmd).decode('utf-8')
 
-    def create_archive(self, root, suffix=None):
+    def create_archive(self, root, suffix=None, exclude=None):
         """
         Create an archive of the tree anchored at ``root``.
 
         If ``suffix`` is provided, archive will be named
         ``self.prefix-suffix``. Otherwise, we will use the current Unix time
         (seconds since the epoch) as a unique name.
+
+        If ``exclude`` is provided, it will be passed to the ``tarsnap
+        --exclude`` option.
         """
         if not suffix:
             suffix = str(time.time())
         archive_name = "-".join([self.prefix, suffix])
-        self._exec_cmd(["-c", "-f", archive_name, root])
+        cmd = ["-c", "-f", archive_name, root]
+        if exclude:
+            cmd.insert(-1, "--exclude")
+            cmd.insert(-1, exclude)
+        self._exec_cmd(cmd)
         return archive_name
 
     def list_archives(self):

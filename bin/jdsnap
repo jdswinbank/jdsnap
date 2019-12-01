@@ -1,21 +1,45 @@
 #!/usr/bin/env python
 
 import argparse
+import json
+import os.path
+
 import jdsnap
+TARSNAP_PATH = "/opt/local/bin/tarsnap"
 
-def main():
-    tarsnap = jdsnap.Tarsnap("mail", exe="/opt/local/bin/tarsnap")
-
-    # Create new archive
-    tarsnap.create_archive("/Users/jds/Mail")
-
-    # Prune old archives
-    intervals = [jdsnap.YEAR, jdsnap.MONTH, jdsnap.WEEK, jdsnap.DAY]
-    all_archives = tarsnap.list_archives()
+def prune_archive(tarsnap_archive, intervals):
+    """
+    Remove unneeded archives.
+    """
+    all_archives = tarsnap_archive.list_archives()
     keep_archives = jdsnap.filter_archives(all_archives, intervals)
     delete_archives = set(all_archives) - set(keep_archives)
     for archive in delete_archives:
-        tarsnap.rm_archive(archive)
+        tarsnap_archive.rm_archive(archive)
+
+def manage_archive(name, path, exclude=None):
+    """
+    Manage backups for a directory.
+
+    Archive the files at ``path`` with to an archive named ``name``. Maintain
+    a rolling history.
+    """
+    tarsnap = jdsnap.Tarsnap(name, exe=TARSNAP_PATH)
+
+    # Create new archive
+    tarsnap.create_archive(path, exclude=exclude)
+
+    # Prune old archives
+    prune_archive(tarsnap, [jdsnap.YEAR, jdsnap.MONTH, jdsnap.WEEK, jdsnap.DAY])
+
+
+def main():
+    with open(os.path.expanduser("~/.jdsnap.json"), "r") as cfg_file:
+        cfg = json.load(cfg_file)
+
+    for name, v in cfg.items():
+        manage_archive(name, v["path"], v.get("exclude", None))
+
 
 if __name__ == "__main__":
     main()

@@ -3,9 +3,9 @@
 import argparse
 import json
 import os.path
+import shutil
 
 import jdsnap
-TARSNAP_PATH = "/opt/local/bin/tarsnap"
 
 def prune_archive(tarsnap_archive, intervals):
     """
@@ -17,14 +17,15 @@ def prune_archive(tarsnap_archive, intervals):
     for archive in delete_archives:
         tarsnap_archive.rm_archive(archive)
 
-def manage_archive(name, path, exclude=None):
+
+def manage_archive(name, path, *, exclude, tarsnap, debug):
     """
     Manage backups for a directory.
 
     Archive the files at ``path`` with to an archive named ``name``. Maintain
     a rolling history.
     """
-    tarsnap = jdsnap.Tarsnap(name, exe=TARSNAP_PATH)
+    tarsnap = jdsnap.Tarsnap(name, exe=tarsnap, debug=debug)
 
     # Create new archive
     tarsnap.create_archive(path, exclude=exclude)
@@ -33,12 +34,26 @@ def manage_archive(name, path, exclude=None):
     prune_archive(tarsnap, [jdsnap.YEAR, jdsnap.MONTH, jdsnap.WEEK, jdsnap.DAY])
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Automated backups.")
+    parser.add_argument('--tarsnap', default=shutil.which("tarsnap"))
+    parser.add_argument('--config', type=argparse.FileType(),
+                        default=os.path.expanduser("~/.jdsnap.json"))
+    parser.add_argument('--debug', action='store_true')
+    return parser.parse_args()
+
+
+def read_config(cfg_file):
+    return json.load(cfg_file)
+
+
 def main():
-    with open(os.path.expanduser("~/.jdsnap.json"), "r") as cfg_file:
-        cfg = json.load(cfg_file)
+    args = parse_args()
+    cfg = read_config(args.config)
 
     for name, v in cfg.items():
-        manage_archive(name, v["path"], v.get("exclude", None))
+        manage_archive(name, v["path"], exclude=v.get("exclude", None),
+                       tarsnap=os.path.realpath(args.tarsnap), debug=args.debug)
 
 
 if __name__ == "__main__":

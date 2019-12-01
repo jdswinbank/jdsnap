@@ -7,19 +7,13 @@ from .archive import Archive
 
 __all__ = ["Tarsnap"]
 
-DEFAULT_EXECUTABLE="tarsnap"
-DEBUG = False
-
 class Tarsnap(object):
-    def __init__(self, prefix, exe=None, keyfile=None, cachedir=None):
+    def __init__(self, prefix, *, exe, keyfile=None,
+                 cachedir=None, debug=False):
         """
         Only handle archives when the name starts with ``prefix``.
         """
-        self.prefix = prefix
-        if exe:
-            self.base_cmd = [os.path.realpath(exe)]
-        else:
-            self.base_cmd = [shutil.which(DEFAULT_EXECUTABLE)]
+        self.prefix, self.base_cmd, self.debug = prefix, [exe], debug
         if keyfile:
             self.base_cmd.extend(["--keyfile", os.path.realpath(keyfile)])
         if cachedir:
@@ -27,7 +21,8 @@ class Tarsnap(object):
 
     def _exec_cmd(self, cmd):
         cmd = self.base_cmd + cmd
-        if DEBUG:
+        if self.debug:
+            cmd.insert(1, "-v")
             print(cmd)
         return subprocess.check_output(cmd).decode('utf-8')
 
@@ -62,7 +57,7 @@ class Tarsnap(object):
         archives = []
         for line in self._exec_cmd(["-v", "--list-archives"]).split('\n'):
             if line.startswith(self.prefix):
-                name, date = line.split('\t')
+                name, date = line.split('\t')[:2]
                 date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
                 archives.append(Archive(name, date))
         return archives

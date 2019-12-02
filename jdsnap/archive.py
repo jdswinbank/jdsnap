@@ -1,5 +1,9 @@
-from collections import namedtuple
+from dataclasses import dataclass
+from datetime import datetime
 
 __all__ = ["Archive"]
 
-Archive = namedtuple("Archive", ["name", "date"])
+@dataclass(frozen=True)
+class Archive(object):
+    name: str
+    date: datetime

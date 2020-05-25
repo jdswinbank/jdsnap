@@ -4,6 +4,7 @@ import argparse
 import json
 import os.path
 import shutil
+import sys
 
 import jdsnap
 
@@ -53,8 +54,11 @@ def main():
 
     for name, v in cfg.items():
         print(f"Processing {name}")
-        manage_archive(name, v["path"], exclude=v.get("exclude", None),
-                       tarsnap=os.path.realpath(args.tarsnap), debug=args.debug)
+        try:
+            manage_archive(name, v["path"], exclude=v.get("exclude", None),
+                           tarsnap=os.path.realpath(args.tarsnap), debug=args.debug)
+        except Exception as e:
+            print(f"  Failed: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

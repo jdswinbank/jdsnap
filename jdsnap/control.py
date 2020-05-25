@@ -4,7 +4,7 @@ import sys
 import klaxon
 
 from .date import YEAR, MONTH, WEEK, DAY
-from .prune import filter_archives
+from .filter import filter_archives
 from .tarsnap import Tarsnap
 
 

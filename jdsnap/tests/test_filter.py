@@ -3,7 +3,7 @@ import unittest
 
 from jdsnap.archive import Archive
 from jdsnap.date import YEAR, MONTH, WEEK, DAY
-from jdsnap.prune import filter_archives
+from jdsnap.filter import filter_archives
 
 
 class TestPruning(unittest.TestCase):

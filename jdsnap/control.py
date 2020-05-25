@@ -18,6 +18,7 @@ def prune_archive(tarsnap_archive, intervals):
     keep_archives = filter_archives(all_archives, intervals)
     delete_archives = set(all_archives) - set(keep_archives)
     for archive in delete_archives:
+        print(f"Removing {archive}")
         tarsnap_archive.rm_archive(archive)
 
 

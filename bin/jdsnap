@@ -4,7 +4,6 @@ import argparse
 import json
 import os.path
 import shutil
-import sys
 
 from jdsnap import manage_all_archives
 

@@ -1,7 +1,9 @@
 import datetime
 import unittest
 
-from jdsnap import Archive, filter_archives, YEAR, MONTH, WEEK, DAY
+from jdsnap.archive import Archive
+from jdsnap.date import YEAR, MONTH, WEEK, DAY
+from jdsnap.prune import filter_archives
 
 
 class TestPruning(unittest.TestCase):

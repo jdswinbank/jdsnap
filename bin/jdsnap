@@ -6,36 +6,7 @@ import os.path
 import shutil
 import sys
 
-import klaxon
-
-import jdsnap
-
-
-def prune_archive(tarsnap_archive, intervals):
-    """
-    Remove unneeded archives.
-    """
-    all_archives = tarsnap_archive.list_archives()
-    keep_archives = jdsnap.filter_archives(all_archives, intervals)
-    delete_archives = set(all_archives) - set(keep_archives)
-    for archive in delete_archives:
-        tarsnap_archive.rm_archive(archive)
-
-
-def manage_archive(name, path, *, exclude, tarsnap, debug):
-    """
-    Manage backups for a directory.
-
-    Archive the files at ``path`` with to an archive named ``name``. Maintain
-    a rolling history.
-    """
-    tarsnap = jdsnap.Tarsnap(name, exe=tarsnap, debug=debug)
-
-    # Create new archive
-    tarsnap.create_archive(path, exclude=exclude)
-
-    # Prune old archives
-    prune_archive(tarsnap, [jdsnap.YEAR, jdsnap.MONTH, jdsnap.WEEK, jdsnap.DAY])
+from jdsnap import manage_all_archives
 
 
 def parse_args():
@@ -56,21 +27,8 @@ def read_config(cfg_file):
 
 def main():
     args = parse_args()
-    cfg = read_config(args.config)
-
-    for name, v in cfg.items():
-        print(f"Processing {name}")
-        try:
-            manage_archive(
-                name,
-                v["path"],
-                exclude=v.get("exclude", None),
-                tarsnap=os.path.realpath(args.tarsnap),
-                debug=args.debug,
-            )
-        except Exception as e:
-            klaxon.klaxon(title="jdsnap backup failed", subtitle=name, message=str(e))
-            print(f"  Failed: {e}", file=sys.stderr)
+    archives = read_config(args.config)
+    manage_all_archives(archives, args.tarsnap, args.debug)
 
 
 if __name__ == "__main__":

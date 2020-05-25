@@ -10,6 +10,7 @@ import klaxon
 
 import jdsnap
 
+
 def prune_archive(tarsnap_archive, intervals):
     """
     Remove unneeded archives.
@@ -39,10 +40,13 @@ def manage_archive(name, path, *, exclude, tarsnap, debug):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Automated backups.")
-    parser.add_argument('--tarsnap', default=shutil.which("tarsnap"))
-    parser.add_argument('--config', type=argparse.FileType(),
-                        default=os.path.expanduser("~/.jdsnap.json"))
-    parser.add_argument('--debug', action='store_true')
+    parser.add_argument("--tarsnap", default=shutil.which("tarsnap"))
+    parser.add_argument(
+        "--config",
+        type=argparse.FileType(),
+        default=os.path.expanduser("~/.jdsnap.json"),
+    )
+    parser.add_argument("--debug", action="store_true")
     return parser.parse_args()
 
 
@@ -57,11 +61,15 @@ def main():
     for name, v in cfg.items():
         print(f"Processing {name}")
         try:
-            manage_archive(name, v["path"], exclude=v.get("exclude", None),
-                           tarsnap=os.path.realpath(args.tarsnap), debug=args.debug)
+            manage_archive(
+                name,
+                v["path"],
+                exclude=v.get("exclude", None),
+                tarsnap=os.path.realpath(args.tarsnap),
+                debug=args.debug,
+            )
         except Exception as e:
-            klaxon.klaxon(title="jdsnap backup failed", subtitle=name,
-                          message=str(e))
+            klaxon.klaxon(title="jdsnap backup failed", subtitle=name, message=str(e))
             print(f"  Failed: {e}", file=sys.stderr)
 
 

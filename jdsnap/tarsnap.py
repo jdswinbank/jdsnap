@@ -6,9 +6,9 @@ from .archive import Archive
 
 __all__ = ["Tarsnap"]
 
+
 class Tarsnap(object):
-    def __init__(self, prefix, *, exe, keyfile=None,
-                 cachedir=None, debug=False):
+    def __init__(self, prefix, *, exe, keyfile=None, cachedir=None, debug=False):
         """
         Only handle archives when the name starts with ``prefix``.
         """
@@ -23,7 +23,7 @@ class Tarsnap(object):
         if self.debug:
             cmd.insert(1, "-v")
             print(cmd)
-        return subprocess.check_output(cmd).decode('utf-8')
+        return subprocess.check_output(cmd).decode("utf-8")
 
     def create_archive(self, root, suffix=None, exclude=None):
         """
@@ -54,9 +54,9 @@ class Tarsnap(object):
         over-ridden by setting the TZ environment variable.
         """
         archives = []
-        for line in self._exec_cmd(["-v", "--list-archives"]).split('\n'):
+        for line in self._exec_cmd(["-v", "--list-archives"]).split("\n"):
             if line.startswith(self.prefix):
-                name, date = line.split('\t')[:2]
+                name, date = line.split("\t")[:2]
                 date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
                 archives.append(Archive(name, date))
         return archives

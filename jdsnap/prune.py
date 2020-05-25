@@ -3,8 +3,10 @@ from operator import attrgetter
 
 __all__ = ["filter_archives"]
 
+
 def uniqify(arg):
     return list(set(arg))
+
 
 def filter_archives(archives, intervals, current_date=None):
     """
@@ -26,7 +28,7 @@ def filter_archives(archives, intervals, current_date=None):
         for i, archive in enumerate(archives[1:-1], 1):
             # If the archive date is within the interval of the current date,
             # we skip it: it'll be caught on the next interval.
-            if ((current_date - interval) < archive.date):
+            if (current_date - interval) < archive.date:
                 continue
 
             # If the archive date is outside the previous interval of the
@@ -36,7 +38,7 @@ def filter_archives(archives, intervals, current_date=None):
 
             # If the _next_ archive is going to be more than interval after
             # the last archive, we should keep this one.
-            if (archives[i+1].date - keep[-1].date) > interval:
+            if (archives[i + 1].date - keep[-1].date) > interval:
                 keep.append(archive)
 
         prev_interval = interval

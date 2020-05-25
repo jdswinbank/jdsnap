@@ -1,4 +1,3 @@
-import datetime
 import unittest
 
 from jdsnap import (DAY, WEEK, MONTH, YEAR)

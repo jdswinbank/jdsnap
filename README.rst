@@ -13,13 +13,13 @@ Installation
 For the author's (macOS 10.15) system.
 We're going to:
 
-- Use the system Python;
+- Use my default Python (installed by Macports);
 - Install into a virtualenv;
 - Run from launchd.
 
 We'll start by setting up the virtualenv::
 
-   $ /usr/bin/python3 -m venv ~/sw/venv/jdsnap
+   $ python -m venv ~/sw/venv/jdsnap
    $ . ~/sw/venv/jdsnap/bin/activate
 
 Now install jdsnap into the new environment.
@@ -62,3 +62,8 @@ And so at this point we can drop the following into ``~/Library/LaunchAgentes/or
        <string>/Users/jds/sw/log/jdsnap.err</string>
    </dict>
    </plist>
+
+Note that it seems tempting to use the system Python 3 (``/usr/bin/python3``), but that doesn't have access to read the ``~/Documents`` folder I'm trying to back up, and there's no easy way to give it that access.
+See, for example, `this Stack Overflow discussion`_, and note that ``/usr/bin/python3`` is just failing rather than prompting for access.
+
+.. _this Stack Overflow discussion: https://apple.stackexchange.com/questions/376907/add-apps-to-files-and-folders-permissions

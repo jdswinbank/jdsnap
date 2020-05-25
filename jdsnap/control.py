@@ -18,7 +18,7 @@ def prune_archive(tarsnap_archive, intervals):
     keep_archives = filter_archives(all_archives, intervals)
     delete_archives = set(all_archives) - set(keep_archives)
     for archive in delete_archives:
-        print(f"Removing {archive}")
+        print(f"Removing {archive.name}")
         tarsnap_archive.rm_archive(archive)
 
 
@@ -31,7 +31,7 @@ def manage_archive(name, path, *, exclude, tarsnap, debug):
     tarsnap = Tarsnap(name, exe=tarsnap, debug=debug)
 
     # Create new archive
-    print(f"Createing new archive for {name}")
+    print(f"Creating new archive for {name}")
     tarsnap.create_archive(path, exclude=exclude)
 
     # Prune old archives
@@ -49,7 +49,7 @@ def manage_all_archives(archives, tarsnap, debug=False):
         configuration information. This includes at least ``path``, and,
         optionally, ``exclude``.
     """
-    for name, cfg in backup_locations.items():
+    for name, cfg in archives.items():
         print(f"Processing {name}")
         try:
             manage_archive(

@@ -39,7 +39,7 @@ And so at this point we can drop the following into ``~/Library/LaunchAgentes/or
    <dict>
        <key>ProgramArguments</key>
        <array>
-           <string>/Users/jds/sw/venv/jdsnap/bin/jdsnap</strong>
+           <string>/Users/jds/sw/venv/jdsnap/bin/jdsnap</string>
            <string>--tarsnap</string>
            <string>/opt/local/bin/tarsnap</string>
            <string>--config</string>

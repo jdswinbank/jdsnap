@@ -6,6 +6,8 @@ import os.path
 import shutil
 import sys
 
+import klaxon
+
 import jdsnap
 
 def prune_archive(tarsnap_archive, intervals):
@@ -58,6 +60,8 @@ def main():
             manage_archive(name, v["path"], exclude=v.get("exclude", None),
                            tarsnap=os.path.realpath(args.tarsnap), debug=args.debug)
         except Exception as e:
+            klaxon.klaxon(title="jdsnap backup failed", subtitle=name,
+                          message=str(e))
             print(f"  Failed: {e}", file=sys.stderr)
 
 

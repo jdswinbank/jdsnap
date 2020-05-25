@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name="jdsnap",
@@ -9,5 +9,6 @@ setup(
     long_description=open('README.rst').read(),
     url="http://github.com/jdswinbank/jdsnap",
     author="John Swinbank",
-    author_email="john@jdsnap.swinbank.org"
+    author_email="john@jdsnap.swinbank.org",
+    install_requires=["klaxon"]
 )

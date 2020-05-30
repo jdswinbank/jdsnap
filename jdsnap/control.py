@@ -1,10 +1,11 @@
 import sys
 
-import klaxon
+import klaxon  # type: ignore
 
 from .date import YEAR, MONTH, WEEK, DAY
 from .filter import filter_archives
 from .tarsnap import Tarsnap
+from .types import ArchiveConfigurations
 
 
 __all__ = ["manage_all_archives"]
@@ -38,7 +39,7 @@ def manage_archive(name, path, *, exclude, tarsnap, debug):
     prune_archive(tarsnap, [YEAR, MONTH, WEEK, DAY])
 
 
-def manage_all_archives(archives, tarsnap, debug=False):
+def manage_all_archives(archives: ArchiveConfigurations, tarsnap: str, debug=False):
     """Manage backups for all directories.
 
     Parameters:

@@ -5,10 +5,13 @@ import json
 import os.path
 import shutil
 
+import typing
+
 from jdsnap import manage_all_archives
+from jdsnap.types import ArchiveConfigurations
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Automated backups.")
     parser.add_argument("--tarsnap", default=shutil.which("tarsnap"))
     parser.add_argument(
@@ -20,11 +23,11 @@ def parse_args():
     return parser.parse_args()
 
 
-def read_config(cfg_file):
+def read_config(cfg_file: typing.TextIO) -> ArchiveConfigurations:
     return json.load(cfg_file)
 
 
-def main():
+def main() -> None:
     args = parse_args()
     archives = read_config(args.config)
     manage_all_archives(archives, args.tarsnap, args.debug)

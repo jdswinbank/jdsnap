@@ -1,5 +1,8 @@
 import datetime
 from operator import attrgetter
+from typing import List
+
+from .archive import Archive
 
 __all__ = ["filter_archives"]
 
@@ -8,7 +11,11 @@ def uniqify(arg):
     return list(set(arg))
 
 
-def filter_archives(archives, intervals, current_date=None):
+def filter_archives(
+    archives: List[Archive],
+    intervals: List[datetime.timedelta],
+    current_date: datetime.datetime = None,
+) -> List[Archive]:
     """
     Return a list of archive names which should be kept.
 

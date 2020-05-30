@@ -1,4 +1,6 @@
+import datetime
 import sys
+from typing import List, Optional
 
 import klaxon  # type: ignore
 
@@ -11,24 +13,26 @@ from .types import ArchiveConfigurations
 __all__ = ["manage_all_archives"]
 
 
-def prune_archive(tarsnap_archive, intervals):
+def prune_archive(tarsnap: Tarsnap, intervals: List[datetime.timedelta]) -> None:
     """Remove unneeded archives.
     """
-    all_archives = tarsnap_archive.list_archives()
+    all_archives = tarsnap.list_archives()
     keep_archives = filter_archives(all_archives, intervals)
     delete_archives = set(all_archives) - set(keep_archives)
     for archive in delete_archives:
         print(f"Removing {archive.name}")
-        tarsnap_archive.rm_archive(archive)
+        tarsnap.rm_archive(archive)
 
 
-def manage_archive(name, path, *, exclude, tarsnap, debug):
+def manage_archive(
+    name: str, path: str, *, exclude: Optional[str], tarsnap_path: str, debug: bool
+) -> None:
     """Manage backups for a directory.
 
     Archive the files at ``path`` with to an archive named ``name``. Maintain
     a rolling history.
     """
-    tarsnap = Tarsnap(name, exe=tarsnap, debug=debug)
+    tarsnap = Tarsnap(name, exe=tarsnap_path, debug=debug)
 
     # Create new archive
     print(f"Creating new archive for {name}")
@@ -39,7 +43,9 @@ def manage_archive(name, path, *, exclude, tarsnap, debug):
     prune_archive(tarsnap, [YEAR, MONTH, WEEK, DAY])
 
 
-def manage_all_archives(archives: ArchiveConfigurations, tarsnap: str, debug=False):
+def manage_all_archives(
+    archives: ArchiveConfigurations, tarsnap_path: str, debug=False
+) -> None:
     """Manage backups for all directories.
 
     Parameters:
@@ -54,9 +60,9 @@ def manage_all_archives(archives: ArchiveConfigurations, tarsnap: str, debug=Fal
         try:
             manage_archive(
                 name,
-                cfg.get("path"),
-                exclude=cfg.get("exclude", None),
-                tarsnap=tarsnap,
+                cfg["path"],
+                exclude=cfg.get("exclude"),  # None),
+                tarsnap_path=tarsnap_path,
                 debug=debug,
             )
         except Exception as e:

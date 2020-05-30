@@ -11,7 +11,7 @@ from jdsnap import manage_all_archives
 from jdsnap.types import ArchiveConfigurations
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Automated backups.")
     parser.add_argument("--tarsnap", default=shutil.which("tarsnap"))
     parser.add_argument(

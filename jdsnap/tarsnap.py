@@ -2,13 +2,24 @@ import datetime
 import os
 import subprocess
 import time
+
+from typing import List, Optional
+
 from .archive import Archive
 
 __all__ = ["Tarsnap"]
 
 
 class Tarsnap(object):
-    def __init__(self, prefix, *, exe, keyfile=None, cachedir=None, debug=False):
+    def __init__(
+        self,
+        prefix: str,
+        *,
+        exe: str,
+        keyfile: Optional[str] = None,
+        cachedir: Optional[str] = None,
+        debug: bool = False
+    ):
         """
         Only handle archives when the name starts with ``prefix``.
         """
@@ -18,14 +29,16 @@ class Tarsnap(object):
         if cachedir:
             self.base_cmd.extend(["--cachedir", os.path.realpath(cachedir)])
 
-    def _exec_cmd(self, cmd):
+    def _exec_cmd(self, cmd: List[str]) -> str:
         cmd = self.base_cmd + cmd
         if self.debug:
             cmd.insert(1, "-v")
             print(cmd)
         return subprocess.check_output(cmd).decode("utf-8")
 
-    def create_archive(self, root, suffix=None, exclude=None):
+    def create_archive(
+        self, root: str, suffix: Optional[str] = None, exclude: Optional[str] = None
+    ) -> str:
         """
         Create an archive of the tree anchored at ``root``.
 
@@ -46,7 +59,7 @@ class Tarsnap(object):
         self._exec_cmd(cmd)
         return archive_name
 
-    def list_archives(self):
+    def list_archives(self) -> List[Archive]:
         """
         Returns a list of Archives.
 
@@ -57,11 +70,11 @@ class Tarsnap(object):
         for line in self._exec_cmd(["-v", "--list-archives"]).split("\n"):
             if line.startswith(self.prefix):
                 name, date = line.split("\t")[:2]
-                date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-                archives.append(Archive(name, date))
+                parsed_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+                archives.append(Archive(name, parsed_date))
         return archives
 
-    def rm_archive(self, archive):
+    def rm_archive(self, archive: Archive) -> None:
         """
         Delete ``archive.name``.
         """

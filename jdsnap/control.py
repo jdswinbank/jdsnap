@@ -4,13 +4,14 @@ from typing import List, Optional
 
 import klaxon  # type: ignore
 
+from .config import parse_args, read_config
 from .date import YEAR, MONTH, WEEK, DAY
 from .filter import filter_archives
 from .tarsnap import Tarsnap
 from .types import ArchiveConfigurations
 
 
-__all__ = ["manage_all_archives"]
+__all__ = ["main"]
 
 
 def prune_archive(tarsnap: Tarsnap, intervals: List[datetime.timedelta]) -> None:
@@ -68,3 +69,9 @@ def manage_all_archives(
         except Exception as e:
             klaxon.klaxon(title="jdsnap backup failed", subtitle=name, message=str(e))
             print(f"  Failed: {e}", file=sys.stderr)
+
+
+def main() -> None:
+    args = parse_args()
+    archives = read_config(args.config)
+    manage_all_archives(archives, args.tarsnap, args.debug)

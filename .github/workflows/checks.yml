@@ -64,4 +64,4 @@ jobs:
         pip install mypy
     - name: Typecheck
       run: |
-        mypy bin/jdsnap jdsnap
+        mypy jdsnap

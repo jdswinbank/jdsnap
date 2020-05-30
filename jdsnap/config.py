@@ -1,14 +1,12 @@
-#!/usr/bin/env python
-
 import argparse
 import json
 import os.path
 import shutil
-
 import typing
 
-from jdsnap import manage_all_archives
-from jdsnap.types import ArchiveConfigurations
+from .types import ArchiveConfigurations
+
+__all__ = ["parse_args", "read_config"]
 
 
 def parse_args() -> argparse.Namespace:
@@ -25,13 +23,3 @@ def parse_args() -> argparse.Namespace:
 
 def read_config(cfg_file: typing.TextIO) -> ArchiveConfigurations:
     return json.load(cfg_file)
-
-
-def main() -> None:
-    args = parse_args()
-    archives = read_config(args.config)
-    manage_all_archives(archives, args.tarsnap, args.debug)
-
-
-if __name__ == "__main__":
-    main()

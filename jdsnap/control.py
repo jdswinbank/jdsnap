@@ -1,5 +1,6 @@
 import datetime
 import sys
+from pathlib import Path
 from typing import List, Optional
 
 import klaxon  # type: ignore
@@ -15,8 +16,7 @@ __all__ = ["main"]
 
 
 def prune_archive(tarsnap: Tarsnap, intervals: List[datetime.timedelta]) -> None:
-    """Remove unneeded archives.
-    """
+    """Remove unneeded archives."""
     all_archives = tarsnap.list_archives()
     keep_archives = filter_archives(all_archives, intervals)
     delete_archives = set(all_archives) - set(keep_archives)
@@ -69,6 +69,9 @@ def manage_all_archives(
         except Exception as e:
             klaxon.klaxon(title="jdsnap backup failed", subtitle=name, message=str(e))
             print(f"  Failed: {e}", file=sys.stderr)
+        else:
+            p = Path(cfg["path"]) / ".jdsnap.done"
+            p.touch()
 
 
 def main() -> None:
